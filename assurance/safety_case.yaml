@@ -1,0 +1,28 @@
+metadata:
+  argument_style: goal_structuring_notation_lightweight
+  top_claim: SC-000
+
+claims:
+  SC-000:
+    claim: mission toolchain reduces preflight and runtime control risk to acceptable level for simulation use
+    supported_by_claims: ["SC-100", "SC-200", "SC-300"]
+    supported_by_hazards: ["HZ-001", "HZ-002", "HZ-003", "HZ-004", "HZ-005"]
+    supported_by_requirements: []
+
+  SC-100:
+    claim: invalid configurations are rejected before runtime execution
+    supported_by_claims: []
+    supported_by_hazards: ["HZ-001", "HZ-002"]
+    supported_by_requirements: ["REQ-MCV-001", "REQ-MCV-002", "REQ-MCV-003"]
+
+  SC-200:
+    claim: runtime randomized testing detects safety and liveness failures with replayable evidence
+    supported_by_claims: []
+    supported_by_hazards: ["HZ-001", "HZ-002", "HZ-004", "HZ-005"]
+    supported_by_requirements: ["REQ-PBT-001", "REQ-PBT-002", "REQ-PBT-003", "REQ-PBT-005"]
+
+  SC-300:
+    claim: mode logic invariants are formally verified against an executable transition model
+    supported_by_claims: []
+    supported_by_hazards: ["HZ-002", "HZ-003"]
+    supported_by_requirements: ["REQ-SM-001", "REQ-SM-002"]

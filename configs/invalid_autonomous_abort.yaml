@@ -1,0 +1,29 @@
+schema_version: 1
+vehicle: falcon_like
+mission_id: BAD-001
+
+guidance:
+  enabled: true
+  max_angle_of_attack: "12 deg"
+  max_q: "65000 Pa"
+
+navigation:
+  imu:
+    enabled: false
+    max_latency: "20 ms"
+  gps:
+    enabled: true
+    max_latency: "250 ms"
+
+control:
+  actuator:
+    max_gimbal_rate: "8 deg/s"
+    max_gimbal_angle: "15 deg"
+  mode_logic:
+    allow_autonomous_abort: true
+    abort_requires: ["gps"]
+
+comms:
+  packet_loss_budget: 0.02
+  time_sync:
+    max_skew: "5 ms"

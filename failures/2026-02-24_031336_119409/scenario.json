@@ -1,0 +1,13 @@
+{
+  "duration_s": 5.0,
+  "faults": [
+    {
+      "end": 5.0,
+      "magnitude_rad": 0.007145,
+      "start": 0.512,
+      "type": "disturbance"
+    }
+  ],
+  "profile": "degraded",
+  "seed": 1340
+}

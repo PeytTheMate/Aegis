@@ -1,0 +1,13 @@
+{
+  "duration_s": 5.559,
+  "faults": [
+    {
+      "end": 5.559,
+      "period_s": 0.6365,
+      "start": 4.684,
+      "type": "mode_churn"
+    }
+  ],
+  "profile": "degraded",
+  "seed": 1429
+}

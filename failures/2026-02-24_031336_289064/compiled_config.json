@@ -1,0 +1,46 @@
+{
+  "artifact_version": 1,
+  "canonical_config": {
+    "comms": {
+      "packet_loss_budget": 0.02,
+      "time_sync": {
+        "max_skew": 0.005
+      }
+    },
+    "control": {
+      "actuator": {
+        "max_gimbal_angle": 0.2617993877991494,
+        "max_gimbal_rate": 0.13962634015954636
+      },
+      "mode_logic": {
+        "abort_requires": [
+          "imu"
+        ],
+        "allow_autonomous_abort": true
+      }
+    },
+    "guidance": {
+      "enabled": true,
+      "max_angle_of_attack": 0.20943951023931953,
+      "max_q": 65000.0
+    },
+    "mission_id": "DEMO-042",
+    "navigation": {
+      "gps": {
+        "enabled": true,
+        "max_latency": 0.25
+      },
+      "imu": {
+        "enabled": true,
+        "max_latency": 0.02
+      }
+    },
+    "schema_version": 1,
+    "vehicle": "falcon_like"
+  },
+  "config_hash": "sha256:b916759688a245b741562753e77d99b96c363298721cce98af893d8182be557c",
+  "generated_at": "2026-02-24T03:13:36Z",
+  "schema_hash": "sha256:022a5913c034f844a15a1035dd1e382b97cf62b48aa738eef838f2bf8216bec5",
+  "source": "configs/valid_mission.yaml",
+  "tool_version": "0.1.0"
+}

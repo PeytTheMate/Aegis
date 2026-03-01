@@ -1,0 +1,13 @@
+{
+  "duration_s": 59.583,
+  "faults": [
+    {
+      "end": 46.816,
+      "rate": 0.036605,
+      "start": 24.329,
+      "type": "packet_loss"
+    }
+  ],
+  "profile": "nominal",
+  "seed": 1348
+}

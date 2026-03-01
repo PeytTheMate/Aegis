@@ -1,0 +1,54 @@
+metadata:
+  methodology: fmea_stpa_hybrid
+  version: 1
+
+hazards:
+  HZ-001:
+    title: loss of attitude margin leading to excessive aoa
+    severity: catastrophic
+    likelihood: remote
+    linked_requirements: ["REQ-PBT-001", "REQ-MCV-003"]
+    controls:
+      constraints: ["MCV-018", "MCV-015"]
+      properties: ["PBT-001", "PBT-005"]
+      formal: []
+
+  HZ-002:
+    title: abort requested but abort mode not entered in time
+    severity: hazardous
+    likelihood: occasional
+    linked_requirements: ["REQ-MCV-002", "REQ-PBT-002"]
+    controls:
+      constraints: ["MCV-016", "MCV-017"]
+      properties: ["PBT-002"]
+      formal: ["FML-003"]
+
+  HZ-003:
+    title: invalid state transition causes control instability
+    severity: hazardous
+    likelihood: remote
+    linked_requirements: ["REQ-SM-001", "REQ-SM-002"]
+    controls:
+      constraints: []
+      properties: ["PBT-004"]
+      formal: ["FML-001", "FML-002"]
+
+  HZ-004:
+    title: non-finite control output propagates into actuator command channel
+    severity: major
+    likelihood: remote
+    linked_requirements: ["REQ-PBT-003"]
+    controls:
+      constraints: []
+      properties: ["PBT-003"]
+      formal: []
+
+  HZ-005:
+    title: sensor fusion divergence causes incorrect state estimation
+    severity: hazardous
+    likelihood: remote
+    linked_requirements: ["REQ-PBT-005"]
+    controls:
+      constraints: []
+      properties: ["PBT-005"]
+      formal: []

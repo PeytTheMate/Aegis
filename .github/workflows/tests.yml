@@ -1,0 +1,20 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install optional dependencies
+        run: pip install "matplotlib>=3.5"
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+      - name: Run assurance checks
+        run: python -m src.cli assurance check --output-dir assurance

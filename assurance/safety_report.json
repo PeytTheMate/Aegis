@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-02-28T23:27:45Z",
+  "inputs": {
+    "hazard_log_path": "/Users/peyton/Downloads/SpaceX_project/assurance/hazard_log.yaml",
+    "requirements_path": "/Users/peyton/Downloads/SpaceX_project/assurance/requirements.yaml",
+    "safety_case_path": "/Users/peyton/Downloads/SpaceX_project/assurance/safety_case.yaml"
+  },
+  "issues": [],
+  "passed": true,
+  "summary": {
+    "claims_total": 4,
+    "hazards_total": 5,
+    "issues_total": 0,
+    "requirements_total": 9
+  }
+}

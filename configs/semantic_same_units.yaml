@@ -1,0 +1,29 @@
+schema_version: 1
+vehicle: falcon_like
+mission_id: DEMO-042
+
+guidance:
+  enabled: true
+  max_angle_of_attack: "0.2094395102 rad"
+  max_q: "65000 Pa"
+
+navigation:
+  imu:
+    enabled: true
+    max_latency: "0.02 s"
+  gps:
+    enabled: true
+    max_latency: "0.25 s"
+
+control:
+  actuator:
+    max_gimbal_rate: "0.1396263402 rad/s"
+    max_gimbal_angle: "0.2617993878 rad"
+  mode_logic:
+    allow_autonomous_abort: true
+    abort_requires: ["imu"]
+
+comms:
+  packet_loss_budget: 0.02
+  time_sync:
+    max_skew: "0.005 s"

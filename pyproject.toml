@@ -1,0 +1,11 @@
+[project]
+name = "mission-toolchain"
+version = "0.2.0"
+description = "Mission configuration verifier, 3-DoF trajectory simulator, and property-based testing harness for safety-critical flight software"
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+plot = ["matplotlib>=3.5"]
+
+[tool.unittest]
+start-directory = "tests"

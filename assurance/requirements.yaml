@@ -1,0 +1,70 @@
+metadata:
+  framework: mission_toolchain_assurance
+  version: 1
+  owner: mission_assurance
+
+requirements:
+  REQ-MCV-001:
+    statement: packet loss budget must remain within certified envelope
+    verification:
+      constraints: ["MCV-014"]
+      tests: ["tests/mcv/test_mcv_constraints.py::TestMCVConstraints.test_invalid_autonomous_abort"]
+      artifacts: ["compiled_artifact"]
+
+  REQ-MCV-002:
+    statement: autonomous abort can only be enabled when imu dependency is satisfied
+    verification:
+      constraints: ["MCV-016", "MCV-017"]
+      tests: ["tests/mcv/test_mcv_constraints.py::TestMCVConstraints.test_invalid_autonomous_abort"]
+      artifacts: ["validation_diagnostics"]
+
+  REQ-MCV-003:
+    statement: at least one navigation sensor shall be enabled
+    verification:
+      constraints: ["MCV-015"]
+      tests: ["tests/mcv/test_mcv_validation.py::TestMCVValidation.test_defaults_injected_deterministically"]
+      artifacts: ["compiled_artifact"]
+
+  REQ-PBT-001:
+    statement: angle of attack shall not exceed configured maximum under runtime disturbances
+    verification:
+      properties: ["PBT-001"]
+      tests: ["tests/pbt/test_runner_bundle_and_shrink.py::TestRunnerBundleAndShrink.test_failure_bundle_and_replay"]
+      artifacts: ["failure_bundle", "trace_csv"]
+
+  REQ-PBT-002:
+    statement: after abort is requested, abort mode shall be entered within deadline
+    verification:
+      properties: ["PBT-002"]
+      formal: ["FML-003"]
+      tests: ["tests/pbt/test_runner_bundle_and_shrink.py::TestRunnerBundleAndShrink.test_failure_bundle_and_replay", "tests/assurance/test_formal_mode_logic.py::TestFormalModeLogic.test_formal_checker_passes_default_model"]
+      artifacts: ["failure_bundle", "formal_report"]
+
+  REQ-PBT-003:
+    statement: controller outputs must remain finite for all executed steps
+    verification:
+      properties: ["PBT-003"]
+      tests: ["tests/pbt/test_runner_bundle_and_shrink.py::TestRunnerBundleAndShrink.test_failure_bundle_and_replay"]
+      artifacts: ["trace_csv"]
+
+  REQ-PBT-005:
+    statement: state estimation error shall remain bounded during fault injection
+    verification:
+      properties: ["PBT-005"]
+      tests: ["tests/pbt/test_kalman.py::TestKalmanFilter::test_estimation_error_bounded_nominal"]
+      artifacts: ["failure_bundle", "trace_csv"]
+
+  REQ-SM-001:
+    statement: abort mode is absorbing and shall not transition back to nominal modes
+    verification:
+      properties: ["PBT-004"]
+      formal: ["FML-002"]
+      tests: ["tests/assurance/test_formal_mode_logic.py::TestFormalModeLogic.test_formal_checker_passes_default_model"]
+      artifacts: ["formal_report", "failure_bundle"]
+
+  REQ-SM-002:
+    statement: mode variable shall remain within allowed state enumeration
+    verification:
+      formal: ["FML-001"]
+      tests: ["tests/assurance/test_formal_mode_logic.py::TestFormalModeLogic.test_formal_checker_passes_default_model"]
+      artifacts: ["formal_report"]
