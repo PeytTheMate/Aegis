@@ -1,4 +1,9 @@
-"""Executable model checking for mission mode-logic properties."""
+"""Executable bounded state-space verification for mode-logic properties.
+
+This checker explores all input traces up to a finite horizon and reports
+counterexamples. It is aligned with the TLA+ specification but does not
+invoke TLC directly.
+"""
 
 from __future__ import annotations
 

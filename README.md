@@ -12,7 +12,7 @@ Built from the premise that the Mars Climate Orbiter was lost to a unit conversi
 
 
 
-## Architecture (Citation: By Anthropic's Claude AI)
+## Architecture
 
 ```
                     YAML mission config
@@ -36,14 +36,15 @@ Built from the premise that the Mars Climate Orbiter was lost to a unit conversi
                     +-----v------+
                     | Assurance  |  requirements traceability,
                     |  (Layer 3) |  hazard log, safety case,
-                    +------------+  TLA+ formal verification
+                    +------------+  traceability + safety case +
+                                   bounded formal verification
 ```
 
-**Layer 1 — MCV (Mission Configuration Verifier):** Parses YAML configs with a zero-dependency parser, normalizes physical units (degrees to radians, percent to fraction), injects deterministic defaults, and enforces 17 cross-field constraints with explainable diagnostics. Emits a canonical JSON artifact with SHA-256 content hash.
+**Layer 1 — MCV (Mission Configuration Verifier):** Parses a supported YAML/JSON subset with a zero-dependency parser, normalizes physical units (degrees to radians, percent to fraction), injects deterministic defaults, and enforces 17 cross-field constraints with explainable diagnostics. Emits a canonical JSON artifact with SHA-256 content hash.
 
 **Layer 2 — PBT (Property-Based Testing):** Runs a compiled artifact through a 2D point-mass trajectory simulator (gravity, thrust, aerodynamic drag with Mach-dependent Cd, exponential atmosphere model). An Extended Kalman Filter fuses noisy IMU/GPS measurements; the PID controller uses the *estimated* AoA, not truth. Adversarial fault injection (sensor bias, packet loss, mode churn) probes 5 safety properties. Failures are automatically shrunk to minimal reproducing scenarios.
 
-**Layer 3 — Assurance:** Machine-readable requirements traceability, hazard log, and safety case in YAML. A TLA+ formal specification of the mode-transition state machine proves abort-is-absorbing and mode-stays-in-domain invariants. All three layers link together: every hazard traces to requirements, requirements trace to properties, properties trace to tests.
+**Layer 3 — Assurance:** Machine-readable requirements traceability, hazard log, and safety case in YAML. The mode-transition state machine is specified in TLA+, and a bounded executable checker verifies formal properties (with counterexamples) over an explicit finite horizon. All three layers link together: hazards trace to requirements, requirements trace to properties, and properties trace to tests.
 
 ## What This Catches
 
@@ -54,9 +55,9 @@ Built from the premise that the Mars Climate Orbiter was lost to a unit conversi
 | PBT-003 | Controller outputs remain finite | NaN/Inf detection on all steps |
 | PBT-004 | Abort mode is absorbing | State transition monitoring |
 | PBT-005 | EKF estimation error stays bounded | Kalman filter under sensor faults |
-| FML-001 | Mode variable stays in domain | TLA+ model checking |
-| FML-002 | Abort is absorbing (formally) | TLA+ invariant proof |
-| FML-003 | Abort deadline always met | TLA+ temporal property |
+| FML-001 | Mode variable stays in domain | Bounded executable checker (aligned to TLA+ spec) |
+| FML-002 | Abort is absorbing (formally) | Bounded executable checker (aligned to TLA+ spec) |
+| FML-003 | Abort deadline always met | Bounded executable checker (aligned to TLA+ spec) |
 | MCV-* | 17 config constraints | Cross-field validation |
 
 ## Quick Start
@@ -71,7 +72,7 @@ python3 -m src.cli mcv compile configs/valid_mission.yaml -o compiled.json
 # To run property-based tests (example being 100 adversarial scenarios)
 python3 -m src.cli pbt run compiled.json --runs 100 --profile degraded
 
-# Full pipeline: validate -> compile -> PBT -> assurance
+# Full pipeline: validate -> compile -> PBT
 python3 -m src.cli pipeline run configs/valid_mission.yaml --runs 50
 
 # For parallel execution with benchmarks
@@ -85,22 +86,21 @@ python3 -m src.cli pbt plot failures/<bundle_dir>
 python3 -m src.cli mcv diff configs/valid_mission.yaml configs/semantic_same_units.yaml
 
 # To run the assurance checks
-python3 -m src.cli assurance check --output-dir assurance
+python3 -m src.cli assurance check --output-dir .artifacts/assurance
 ```
 
-## Example Output
+## Example Output (actual CLI format)
 
 ```
-$ python3 -m src.cli pipeline run configs/valid_tight_aoa.yaml --runs 20
-
-[MCV]  Validating configs/valid_tight_aoa.yaml ... OK (17 constraints passed)
-[MCV]  Compiling artifact ... OK (sha256:f120014f...)
-[PBT]  Running 20 scenarios (profile: nominal, seed: 0) ...
-[PBT]  Scenario 7: FAIL — PBT-001 AoA exceeds configured max at t=12.3s
-[PBT]  Shrinking scenario 7 ... 30.0s -> 7.5s, 3 faults -> 1 fault
-[PBT]  Bundle saved: failures/PBT-001_20260228_233000/
-[PBT]  19/20 passed, 1 failed (1 bundle saved)
-[ASR]  Traceability: PASS | Safety case: PASS | Formal: PASS
+$ python3 -m src.cli pipeline run configs/valid_tight_aoa.yaml --runs 5 --profile degraded
+{
+  "compiled_artifact": ".artifacts/compiled.json",
+  "pbt": {
+    "failure_count": 5,
+    "profile": "degraded",
+    "runs": 5
+  }
+}
 ```
 
 A failure bundle contains everything needed to reproduce and diagnose:
@@ -108,8 +108,9 @@ A failure bundle contains everything needed to reproduce and diagnose:
 failures/PBT-001_20260228_233000/
   scenario.json      # minimal reproducing scenario
   trace.csv          # full simulation trace (40+ fields)
-  config.json        # exact compiled config used
-  violations.json    # property violation details
+  compiled_config.json  # exact compiled config used
+  report.md             # property violation summary
+  repro.sh              # deterministic replay command
 ```
 
 ## Trace Visualization
@@ -132,13 +133,13 @@ The trajectory simulator models a Falcon-like first stage:
 
 ## TLA+ Formal Specification
 
-The mode-transition state machine (NOMINAL -> ABORT_PENDING -> ABORT) is specified in TLA+ at `formal/mode_logic.tla`. The formal checker is used to prove three invariants:
+The mode-transition state machine (NOMINAL -> ABORT_PENDING -> ABORT) is specified in TLA+ at `formal/mode_logic.tla`. The repository executes a bounded state-space checker in Python (`src/assurance/formal_mode_logic.py`) that reports pass/fail and counterexamples for three formal properties:
 
 - **FML-001:** Mode variable is always in {NOMINAL, ABORT_PENDING, ABORT}
 - **FML-002:** ABORT is an absorbing state (once entered, never leaves)
 - **FML-003:** Abort is entered within `AbortDelay` steps of the request
 
-The Python formal checker in `src/assurance/formal_mode_logic.py` also exhaustively enumerates reachable states and verifies the invariants against the TLA+ specification.
+Scope note: this is bounded verification over a finite horizon, not full unbounded model checking with TLC.
 
 ## Project Structure
 
@@ -166,7 +167,7 @@ python3 -m unittest discover -s tests -v
 python3 -m unittest tests.pbt.test_kalman -v          # Kalman filter + PBT-005
 python3 -m unittest tests.pbt.test_sut_3dof -v        # 3-DoF simulator
 python3 -m unittest tests.pbt.test_plotting -v         # trace visualization
-python3 -m unittest tests.assurance.test_formal_mode_logic -v  # TLA+ checker
+python3 -m unittest tests.assurance.test_formal_mode_logic -v  # bounded formal checker
 ```
 
 ## Design Decisions
@@ -175,4 +176,3 @@ python3 -m unittest tests.assurance.test_formal_mode_logic -v  # TLA+ checker
 - **Deterministic by default:** Fixed seeds, `Pool.map` for ordered parallel execution, SHA-256 content hashing. Same input always produces same output.
 - **Honest failure reporting:** The shrinker reduces failing scenarios to minimal reproductions. Failure bundles are self-contained and replayable. No silent suppression of violations for transparency.
 - **Machine-checkable assurance:** Every requirement traces to a property, every property traces to a test, every hazard maps to mitigating requirements. The `assurance check` command verifies the entire chain.
-

@@ -183,8 +183,8 @@ def _handle_pipeline_run(args: argparse.Namespace) -> int:
 def _handle_assurance_traceability(args: argparse.Namespace) -> int:
     report = build_traceability_report(args.requirements)
     if args.output_json or args.output_markdown:
-        output_json = args.output_json or Path("assurance") / "traceability_report.json"
-        output_markdown = args.output_markdown or Path("assurance") / "traceability_report.md"
+        output_json = args.output_json or Path(".artifacts") / "assurance" / "traceability_report.json"
+        output_markdown = args.output_markdown or Path(".artifacts") / "assurance" / "traceability_report.md"
         write_traceability_outputs(report, output_json, output_markdown)
         print(f"Traceability reports written to {output_json} and {output_markdown}")
     else:
@@ -196,8 +196,8 @@ def _handle_assurance_traceability(args: argparse.Namespace) -> int:
 def _handle_assurance_safety(args: argparse.Namespace) -> int:
     report = build_safety_report(args.requirements, args.hazards, args.safety_case)
     if args.output_json or args.output_markdown:
-        output_json = args.output_json or Path("assurance") / "safety_report.json"
-        output_markdown = args.output_markdown or Path("assurance") / "safety_report.md"
+        output_json = args.output_json or Path(".artifacts") / "assurance" / "safety_report.json"
+        output_markdown = args.output_markdown or Path(".artifacts") / "assurance" / "safety_report.md"
         write_json(output_json, report)
         Path(output_markdown).write_text(render_safety_markdown(report), encoding="utf-8")
         print(f"Safety reports written to {output_json} and {output_markdown}")
@@ -216,8 +216,8 @@ def _handle_assurance_formal(args: argparse.Namespace) -> int:
         allow_abort_exit=args.allow_abort_exit,
     )
     if args.output_json or args.output_markdown:
-        output_json = args.output_json or Path("assurance") / "formal_report.json"
-        output_markdown = args.output_markdown or Path("assurance") / "formal_report.md"
+        output_json = args.output_json or Path(".artifacts") / "assurance" / "formal_report.json"
+        output_markdown = args.output_markdown or Path(".artifacts") / "assurance" / "formal_report.md"
         write_json(output_json, report)
         Path(output_markdown).write_text(render_formal_markdown(report), encoding="utf-8")
         print(f"Formal reports written to {output_json} and {output_markdown}")
@@ -363,7 +363,7 @@ def build_parser() -> argparse.ArgumentParser:
     check_parser.add_argument("--requirements")
     check_parser.add_argument("--hazards")
     check_parser.add_argument("--safety-case")
-    check_parser.add_argument("--output-dir", default="assurance")
+    check_parser.add_argument("--output-dir", default=".artifacts/assurance")
     check_parser.add_argument("--horizon-steps", type=int, default=8)
     check_parser.add_argument("--abort-delay-steps", type=int, default=3)
     check_parser.add_argument("--abort-deadline-steps", type=int, default=4)

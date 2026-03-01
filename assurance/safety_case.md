@@ -19,6 +19,6 @@
 
 ## Evidence Pointers
 
-- Requirements traceability report: `assurance/traceability_report.json` and `assurance/traceability_report.md`.
-- Safety consistency report: `assurance/safety_report.json` and `assurance/safety_report.md`.
-- Formal mode report: `assurance/formal_report.json` and `assurance/formal_report.md`.
+- Requirements traceability report: `.artifacts/assurance/traceability_report.json` and `.artifacts/assurance/traceability_report.md`.
+- Safety consistency report: `.artifacts/assurance/safety_report.json` and `.artifacts/assurance/safety_report.md`.
+- Formal mode report: `.artifacts/assurance/formal_report.json` and `.artifacts/assurance/formal_report.md`.

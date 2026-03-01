@@ -17,4 +17,4 @@ jobs:
       - name: Run tests
         run: python -m unittest discover -s tests -v
       - name: Run assurance checks
-        run: python -m src.cli assurance check --output-dir assurance
+        run: python -m src.cli assurance check --output-dir .artifacts/assurance-ci

@@ -1,0 +1,15 @@
+# Python cache/artifacts
+__pycache__/
+*.py[cod]
+
+# Local build and runtime outputs
+.artifacts/
+failures/
+compiled.json
+
+# Generated assurance reports (source inputs stay tracked)
+assurance/*_report.json
+assurance/*_report.md
+
+# Local editor/OS noise
+.DS_Store
